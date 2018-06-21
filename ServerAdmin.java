@@ -8,6 +8,7 @@ public class ServerAdmin extends Thread{
 	
 	public synchronized void addCliente(InforCliente mCliente) {
 		listaClis.add(mCliente);
+		System.out.println("Cliente añadito");
 	}
 	public synchronized String getClientes() throws InterruptedException {
 		String clientes = null;
