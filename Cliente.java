@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.net.Socket;
 
 public class Cliente  extends Thread{
 	private ServerAdmin exServerAdmin;
@@ -10,6 +11,7 @@ public class Cliente  extends Thread{
 	public Cliente(InforCliente inforCli, ServerAdmin mSeverAdmin) {
 		this.mInforCli=inforCli;
 		this.exServerAdmin=mSeverAdmin;
+		Socket socket=inforCli.mSocket;
 		
 		System.out.println("Cliente Conectado...");
 	}
