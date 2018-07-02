@@ -9,20 +9,17 @@ import java.net.Socket;
 public class MainServer {
 	static ServerSocket serverSocket = null;
 	public static final int PORT = 1995;
-	private static BufferedReader in;
-	private static BufferedWriter out;
+	
 	
 	public static void main(String[] args) {
 		
 		try {
 			serverSocket = new ServerSocket(1995);
-			System.out.println("Server Creado");
-			
-			ServerAdmin serVer=new ServerAdmin();
-			serVer.start();
-			
+			System.out.println("Server Iniciado...");
+		
 			while(true) {
-				
+				ServerAdmin serVer=new ServerAdmin();
+				serVer.start();
 				Socket socket = serverSocket.accept();
 				InforCliente infCli=new InforCliente();
 				infCli.mSocket=socket;
