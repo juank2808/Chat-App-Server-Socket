@@ -16,10 +16,11 @@ public class MainServer {
 		try {
 			serverSocket = new ServerSocket(1995);
 			System.out.println("Server Iniciado...");
+			ServerAdmin serVer=new ServerAdmin();
+			serVer.start();
 		
 			while(true) {
-				ServerAdmin serVer=new ServerAdmin();
-				serVer.start();
+				
 				Socket socket = serverSocket.accept();
 				InforCliente infCli=new InforCliente();
 				infCli.mSocket=socket;
@@ -29,7 +30,6 @@ public class MainServer {
 				
 				infCli.mCliente=cli;
 				cli.start();
-				serVer.addCliente(infCli);
 				
 			}
 		} catch (IOException e) {

@@ -3,12 +3,11 @@ import java.util.ArrayList;
 
 
 public class ServerAdmin extends Thread{
-	
+	InforCliente infcli;
 	ArrayList<InforCliente> listaClis =new ArrayList<InforCliente>();
-	private ArrayList<String> listMsjs = new ArrayList<String>();
 	
 	public synchronized void addCliente(InforCliente mCliente) {
-		System.out.println("cliente"+ mCliente.mCliente.getName());
+		//System.out.println("cliente: "+ mCliente.getmNombre());
 		listaClis.add(mCliente);
 		System.out.println("Cliente añadido...");
 	}
@@ -16,30 +15,20 @@ public class ServerAdmin extends Thread{
 		String clientes = null;
 		while(listaClis.size()==0)
 		wait();
-		clientes = listaClis.get(0).toString();
+		clientes = listaClis.get(0).mNombre;
 		return clientes;
 		
-	}
-	private synchronized String getSiguienteMensaje() throws InterruptedException {
-		while (listMsjs.size()==0)
-			wait();
-			String mensaje = (String)listMsjs.get(0);
-			listMsjs.remove(0);
-			return mensaje;
-		
-	}
-	
-	public synchronized void addMensaje(String mensaje) {
-		
-		listMsjs.add(mensaje);
 	}
 	public void tratadoMensajes(String mensaje) {
 		
 		String [] tipoMensaje = mensaje.split(" ");
-		System.out.println(tipoMensaje[0]);
 		switch(tipoMensaje[0]) {
 			case "NICK":
 				System.out.println(tipoMensaje[1]);
+				infcli = new InforCliente();
+				infcli.setmNombre(tipoMensaje[1]);
+				addCliente(infcli);
+				Cliente.addMensaje("LOGIN: "+"Bienvenido! ");
 				;break;
 			case "MENSAJE":
 				System.out.println(tipoMensaje[1]);
@@ -53,8 +42,7 @@ public class ServerAdmin extends Thread{
 		
 		while(true) {
 			try {
-				String mensajelst = getSiguienteMensaje();
-				System.out.println("Estoy en el run Server Admin :"+mensajelst);
+				System.out.println("Server Admin OK");
 				getClientes();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

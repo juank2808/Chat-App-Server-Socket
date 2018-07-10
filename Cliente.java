@@ -5,12 +5,15 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Vector;
 
 public class Cliente  extends Thread{
 	private ServerAdmin exServerAdmin;
 	private InforCliente mInforCli;
-	private static BufferedReader mIn;
-	private static BufferedWriter out;
+	private PrintWriter mOut;
+	private BufferedReader mIn;
+	private static Vector listMsjs = new Vector();
 	
 	public Cliente(InforCliente inforCli, ServerAdmin mSeverAdmin) throws IOException {
 		this.mInforCli=inforCli;
@@ -18,22 +21,42 @@ public class Cliente  extends Thread{
 		Socket socket=inforCli.mSocket;
 		
 		mIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+		mOut = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 		System.out.println("Cliente Conectado...");
+	}
+	public synchronized static void addMensaje(String mensaje) {
+		
+		System.out.println(mensaje);
+		//I need to know i can't send messages 
+		listMsjs.add(mensaje);
+		
+	}
+	public synchronized void getSiguienteMensaje() throws InterruptedException, IOException{
+		String mensaje = null;
+		while (listMsjs.size()==0)
+			System.out.println("mi mensaje "+mensaje);
+			wait();
+			mensaje = (String)listMsjs.get(0);
+			listMsjs.remove(0);
+			mOut.println(mensaje);
+			
+			mOut.flush();
+		
 	}
 	public void run(){
 		
 		String mMensaje;
 		try {
 			while((mMensaje=mIn.readLine())!=null) {
-				
-				//System.out.println(mMensaje);
+				System.out.println(mMensaje);
 				exServerAdmin.tratadoMensajes(mMensaje);
 				
+				//System.out.println("mis clientes: "+exServerAdmin.getClientes().toString());
+				getSiguienteMensaje();
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		}catch (IOException | InterruptedException e) {
+        	System.out.println(e);
+        }
+		mInforCli.mCliente.interrupt();
 	}
 }
